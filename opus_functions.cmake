@@ -139,30 +139,35 @@ function(opus_detect_sse COMPILER_SUPPORT_SIMD)
     set(SSE2_SUPPORTED 0 PARENT_SCOPE)
   endif()
 
-  check_include_file(smmintrin.h HAVE_SMMINTRIN_H) # SSE4.1
-  if(HAVE_SMMINTRIN_H)
-    if(MSVC)
-      if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-        check_flag(SSE4_1 /arch:SSE2) # SSE2 and above
+  if (NOT OPUS_LEGACY_CPU)
+    check_include_file(smmintrin.h HAVE_SMMINTRIN_H) # SSE4.1
+    if(HAVE_SMMINTRIN_H)
+      if(MSVC)
+        if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+          check_flag(SSE4_1 /arch:SSE2) # SSE2 and above
+        else()
+          set(SSE4_1_SUPPORTED 1 PARENT_SCOPE)
+        endif()
       else()
-        set(SSE4_1_SUPPORTED 1 PARENT_SCOPE)
+        check_and_set_flag(SSE4_1 -msse4.1)
       endif()
     else()
-      check_and_set_flag(SSE4_1 -msse4.1)
+      set(SSE4_1_SUPPORTED 0 PARENT_SCOPE)
     endif()
-  else()
-    set(SSE4_1_SUPPORTED 0 PARENT_SCOPE)
-  endif()
 
-  check_include_file(immintrin.h HAVE_IMMINTRIN_H) # AVX
-  if(HAVE_IMMINTRIN_H)
-    if(MSVC)
-      check_flag(AVX /arch:AVX)
+    check_include_file(immintrin.h HAVE_IMMINTRIN_H) # AVX
+    if(HAVE_IMMINTRIN_H)
+      if(MSVC)
+        check_flag(AVX /arch:AVX)
+      else()
+        check_and_set_flag(AVX -mavx)
+      endif()
     else()
-      check_and_set_flag(AVX -mavx)
+      set(AVX_SUPPORTED 0 PARENT_SCOPE)
     endif()
   else()
-    set(AVX_SUPPORTED 0 PARENT_SCOPE)
+      set(SSE4_1_SUPPORTED 0 PARENT_SCOPE)
+      set(AVX_SUPPORTED 0 PARENT_SCOPE)
   endif()
 
   if(MSVC) # To avoid warning D9025 of overriding compiler options

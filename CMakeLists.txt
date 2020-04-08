@@ -32,6 +32,8 @@ option(OPUS_INSTALL_PKG_CONFIG_MODULE "Install PkgConfig module" ON)
 option(OPUS_INSTALL_CMAKE_CONFIG_MODULE "Install CMake package config module"
        ON)
 
+option(OPUS_LEGACY_CPU "Disable SSE4.1 and AVX" ON)
+
 include(opus_config.cmake)
 include(opus_sources.cmake)
 include(GNUInstallDirs)
