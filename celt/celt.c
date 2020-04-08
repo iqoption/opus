@@ -58,6 +58,23 @@
 #include "mips/celt_mipsr1.h"
 #endif
 
+#if defined(OPUS_HAVE_RTCD) && \
+  (defined(OPUS_ARM_ASM) || defined(OPUS_ARM_MAY_HAVE_NEON_INTR))
+
+#elif (defined(OPUS_X86_MAY_HAVE_SSE) && !defined(OPUS_X86_PRESUME_SSE)) || \
+  (defined(OPUS_X86_MAY_HAVE_SSE2) && !defined(OPUS_X86_PRESUME_SSE2)) || \
+  (defined(OPUS_X86_MAY_HAVE_SSE4_1) && !defined(OPUS_X86_PRESUME_SSE4_1)) || \
+  (defined(OPUS_X86_MAY_HAVE_AVX) && !defined(OPUS_X86_PRESUME_AVX))
+
+#else
+#include "cpu_support.h"
+
+int opus_select_arch(void)
+{
+  return 0;
+}
+#endif
+
 
 int resampling_factor(opus_int32 rate)
 {
