@@ -37,6 +37,8 @@
 
 #include "stack_alloc.h"
 
+# if defined(OPUS_X86_MAY_HAVE_SSE4_1)
+
 typedef struct {
     opus_int32 sLPC_Q14[ MAX_SUB_FRAME_LENGTH + NSQ_LPC_BUF_LENGTH ];
     opus_int32 RandState[ DECISION_DELAY ];
@@ -857,3 +859,5 @@ static OPUS_INLINE void silk_nsq_del_dec_scale_states_sse4_1(
         }
     }
 }
+
+#endif
